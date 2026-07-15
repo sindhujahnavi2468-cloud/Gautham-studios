@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GS Films — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Cormorant+SC:wght@500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#FAF8F4;
+  --warm:#F5F2EC;
+  --parchment:#EDE8DF;
+  --charcoal:#1C1C1C;
+  --brown:#2A1A0E;
+  --gold:#A8844A;
+  --gold-l:#C9A96E;
+  --gold-faint:rgba(168,132,74,.09);
+  --grey:#7A7065;
+  --rule:#DDD8CF;
+  --danger:#C0392B;
+  --success:#4A7A5A;
+  --sidebar:240px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--warm);color:var(--charcoal);font-family:'Montserrat',sans-serif;font-weight:400;min-height:100vh;display:flex}
+.sidebar{width:var(--sidebar);background:var(--brown);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sidebar-logo{padding:32px 28px 24px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-logo-text{font-family:'Cormorant SC',serif;font-size:18px;color:#FAF8F4;letter-spacing:.08em}
+.sidebar-logo-sub{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-l);margin-top:4px}
+.sidebar-nav{padding:24px 0;flex:1}
+.nav-group{margin-bottom:8px}
+.nav-group-label{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:rgba(250,248,244,.28);padding:0 28px 10px}
+.sidebar-link{display:flex;align-items:center;gap:12px;padding:11px 28px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(250,248,244,.55);cursor:pointer;transition:all .2s;border-left:2px solid transparent;text-decoration:none}
+.sidebar-link:hover{color:var(--gold-l);background:rgba(255,255,255,.04)}
+.sidebar-link.active{color:#FAF8F4;border-left-color:var(--gold);background:rgba(168,132,74,.12)}
+.sidebar-link .icon{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.sidebar-bottom{padding:20px 28px;border-top:1px solid rgba(255,255,255,.08)}
+.sidebar-bottom a{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(250,248,244,.35);text-decoration:none;transition:color .2s;display:block;margin-bottom:6px}
+.sidebar-bottom a:hover{color:var(--gold-l)}
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column}
+.top-bar{background:var(--cream);border-bottom:1px solid var(--rule);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.top-bar-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--brown)}
+.top-bar-right{display:flex;align-items:center;gap:20px}
+.save-btn{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;background:var(--gold);color:#fff;border:none;padding:10px 28px;cursor:pointer;transition:background .2s;font-family:'Montserrat',sans-serif}
+.save-btn:hover{background:var(--gold-l)}
+.save-btn:disabled{opacity:.5;cursor:default}
+.content{padding:40px;flex:1}
+.section-page{display:none}
+.section-page.active{display:block}
+.section-header{margin-bottom:36px}
+.section-header h1{font-family:'Cormorant SC',serif;font-size:32px;color:var(--brown);font-weight:600;letter-spacing:.04em}
+.section-header p{font-size:12px;color:var(--grey);margin-top:6px;line-height:1.7;letter-spacing:.5px}
+.card{background:var(--cream);border:1px solid var(--rule);padding:28px 32px;margin-bottom:20px}
+.card-title{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+
+/* ─── FRAMES GRID (mirrors the site's 5-col magazine grid, incl. text cell) ─── */
+.frames-unified-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.img-slot{position:relative;aspect-ratio:2/2.6;background:var(--parchment);border:1px dashed rgba(168,132,74,.35);overflow:hidden;cursor:pointer;transition:border-color .2s}
+.img-slot:hover{border-color:var(--gold)}
+.img-slot img{width:100%;height:100%;object-fit:cover;display:block}
+.img-slot .slot-overlay{position:absolute;inset:0;background:rgba(42,26,14,.0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:background .2s}
+.img-slot:hover .slot-overlay{background:rgba(42,26,14,.55)}
+.img-slot .slot-icon{font-size:22px;color:rgba(168,132,74,.45)}
+.img-slot:hover .slot-icon{color:#FAF8F4}
+.img-slot .slot-txt{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(168,132,74,.45)}
+.img-slot:hover .slot-txt{color:rgba(250,248,244,.7)}
+.img-slot .remove-img{position:absolute;top:8px;right:8px;background:rgba(192,57,43,.85);color:#fff;border:none;width:24px;height:24px;border-radius:50%;font-size:13px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1}
+.img-slot.has-image:hover .remove-img{display:flex}
+.img-slot.empty .slot-overlay{background:transparent}
+.slot-num{position:absolute;top:8px;left:10px;font-size:8px;letter-spacing:1.5px;color:rgba(168,132,74,.6);font-family:'Montserrat',sans-serif}
+.img-slot.has-image .slot-num{color:rgba(250,248,244,.6)}
+.row2-text-cell{aspect-ratio:2/2.6;background:#fff;border:1px solid var(--rule);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px}
+
+.story-list{display:flex;flex-direction:column;gap:16px}
+.story-item{background:var(--cream);border:1px solid var(--rule);display:grid;grid-template-columns:100px 1fr auto;gap:0;overflow:hidden;transition:border-color .2s;align-items:center}
+.story-item:hover{border-color:var(--gold-l)}
+.story-thumb-wrap{position:relative;width:100px;height:120px;flex-shrink:0;cursor:pointer;overflow:hidden}
+.story-thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.story-thumb-overlay{position:absolute;inset:0;background:rgba(42,26,14,0);display:flex;align-items:center;justify-content:center;transition:background .2s;font-size:18px;color:#fff;opacity:0}
+.story-thumb-wrap:hover .story-thumb-overlay{background:rgba(42,26,14,.55);opacity:1}
+.story-info{padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+.story-info-tag{font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold)}
+.story-info-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--brown)}
+.story-actions{display:flex;flex-direction:row;align-items:center;gap:8px;padding:16px 20px;border-left:1px solid var(--rule)}
+.story-action-btn{background:var(--warm);border:1px solid var(--rule);cursor:pointer;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--grey);transition:all .2s;padding:9px 16px;font-family:'Montserrat',sans-serif;border-radius:999px;white-space:nowrap}
+.story-action-btn:hover{background:var(--gold-faint);color:var(--gold);border-color:var(--gold-l)}
+.story-action-btn.danger:hover{background:rgba(192,57,43,.08);color:var(--danger);border-color:var(--danger)}
+.add-form{background:var(--cream);border:1px solid var(--rule);padding:28px 32px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.form-group{display:flex;flex-direction:column;gap:7px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold)}
+.form-input,.form-textarea,.form-select{background:var(--warm);border:1px solid var(--rule);padding:11px 14px;font-size:13px;color:var(--brown);font-family:'Montserrat',sans-serif;font-weight:400;width:100%;transition:border-color .2s;outline:none}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--gold)}
+.form-textarea{resize:vertical;min-height:110px;line-height:1.7}
+.form-hint{font-size:10px;color:var(--grey);margin-top:4px;line-height:1.5}
+.img-picker-mini{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.img-picker-preview{width:80px;height:80px;object-fit:cover;border:1px solid var(--rule);display:none}
+.img-picker-preview.show{display:block}
+.img-picker-ph{width:80px;height:80px;background:var(--parchment);border:1px dashed rgba(168,132,74,.35);display:flex;align-items:center;justify-content:center;font-size:20px;color:rgba(168,132,74,.4);flex-shrink:0}
+.pick-btn{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);background:none;border:1px solid var(--gold-l);padding:9px 18px;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .2s}
+.pick-btn:hover{background:var(--gold-faint)}
+.form-actions{display:flex;gap:12px;margin-top:24px}
+.btn-primary{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;background:var(--gold);color:#fff;border:none;padding:12px 30px;cursor:pointer;transition:background .2s;font-family:'Montserrat',sans-serif}
+.btn-primary:hover{background:var(--gold-l)}
+.btn-secondary{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;background:none;color:var(--grey);border:1px solid var(--rule);padding:12px 24px;cursor:pointer;transition:all .2s;font-family:'Montserrat',sans-serif}
+.btn-secondary:hover{border-color:var(--grey);color:var(--charcoal)}
+.video-list{display:flex;flex-direction:column;gap:16px}
+.video-item{background:var(--cream);border:1px solid var(--rule);display:grid;grid-template-columns:160px 1fr auto;gap:0;overflow:hidden;transition:border-color .2s}
+.video-item:hover{border-color:var(--gold-l)}
+.video-thumb-wrap{position:relative;width:160px;height:100px;flex-shrink:0;overflow:hidden;background:#1A1410}
+.video-thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.video-thumb-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.play-badge{width:38px;height:38px;border:1px solid rgba(250,248,244,.6);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.play-badge svg{fill:white;width:12px;margin-left:2px}
+.video-info{padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+.video-info-tag{font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold)}
+.video-info-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;color:var(--brown)}
+.video-info-url{font-size:10px;color:var(--grey);letter-spacing:.3px;word-break:break-all;max-width:420px}
+.video-actions{display:flex;flex-direction:column;border-left:1px solid var(--rule)}
+.video-action-btn{flex:1;background:none;border:none;cursor:pointer;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--grey);transition:all .2s;padding:0 20px;font-family:'Montserrat',sans-serif;border-bottom:1px solid var(--rule)}
+.video-action-btn:last-child{border-bottom:none}
+.video-action-btn:hover{background:var(--gold-faint);color:var(--gold)}
+.video-action-btn.danger:hover{background:rgba(192,57,43,.08);color:var(--danger)}
+.toast{position:fixed;bottom:36px;right:36px;background:var(--brown);color:#FAF8F4;padding:14px 24px;font-size:10px;letter-spacing:2px;text-transform:uppercase;z-index:9999;opacity:0;transform:translateY(12px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.error{background:var(--danger)}
+.toast.success-toast{background:var(--success)}
+.modal-bg{position:fixed;inset:0;background:rgba(42,26,14,.65);z-index:5000;display:none;align-items:center;justify-content:center;padding:24px}
+.modal-bg.open{display:flex}
+.modal-box{background:var(--cream);padding:36px;max-width:540px;width:100%;position:relative;max-height:90vh;overflow-y:auto}
+.modal-box h3{font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;color:var(--brown);margin-bottom:20px}
+.modal-close-btn{position:absolute;top:16px;right:20px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--grey);opacity:.6;transition:opacity .2s}
+.modal-close-btn:hover{opacity:1}
+.url-input-wrap{display:flex;gap:10px;align-items:flex-start}
+.url-input-wrap .form-input{flex:1}
+.stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-bottom:32px}
+.stat-card{background:var(--cream);border:1px solid var(--rule);padding:20px 24px;text-align:center}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;color:var(--brown);line-height:1}
+.stat-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-top:6px}
+.collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:4px 0}
+.collapsible-toggle{font-size:18px;color:var(--gold);transition:transform .25s}
+.collapsible-body{overflow:hidden;transition:max-height .35s ease}
+
+/* Section image slots (Intro / About — left, right, mobile) */
+.section-img-slot{position:relative;aspect-ratio:2/2.6;background:var(--parchment);border:1px dashed rgba(168,132,74,.35);overflow:hidden;cursor:pointer;transition:border-color .2s}
+.section-img-slot:hover{border-color:var(--gold)}
+.section-img-slot img{width:100%;height:100%;object-fit:cover;display:block}
+.section-img-slot .slot-overlay{position:absolute;inset:0;background:rgba(42,26,14,0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:background .2s}
+.section-img-slot:hover .slot-overlay{background:rgba(42,26,14,.55)}
+.section-img-slot .slot-icon{font-size:22px;color:rgba(168,132,74,.45)}
+.section-img-slot:hover .slot-icon{color:#FAF8F4}
+.section-img-slot .slot-txt{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(168,132,74,.45)}
+.section-img-slot:hover .slot-txt{color:rgba(250,248,244,.7)}
+.section-img-slot .remove-img{position:absolute;top:8px;right:8px;background:rgba(192,57,43,.85);color:#fff;border:none;width:24px;height:24px;border-radius:50%;font-size:13px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1}
+.section-img-slot.has-image:hover .remove-img{display:flex}
+.section-img-slot.empty .slot-overlay{background:transparent}
+.section-img-slot .slot-num{position:absolute;top:8px;left:10px;font-size:8px;letter-spacing:1.5px;color:rgba(168,132,74,.6);font-family:'Montserrat',sans-serif}
+.section-img-slot.has-image .slot-num{color:rgba(250,248,244,.6)}
+
+input[type=file]{display:none}
+@media(max-width:768px){
+  .sidebar{width:72px}
+  .sidebar-logo{padding:16px 10px;text-align:center}
+  .sidebar-logo-text{font-size:11px;letter-spacing:.04em}
+  .sidebar-logo-sub{display:none}
+  .nav-group-label{display:none}
+  .sidebar-link{padding:14px 0;justify-content:center;flex-direction:column;gap:4px;border-left:none;border-right:2px solid transparent;font-size:7px;letter-spacing:1px}
+  .sidebar-link.active{border-left:none;border-right-color:var(--gold)}
+  .sidebar-link .icon{font-size:18px;width:auto}
+  .sidebar-bottom{padding:12px 8px;text-align:center}
+  .sidebar-bottom a{font-size:7px;letter-spacing:1px}
+  .main{margin-left:72px}
+  .top-bar{padding:0 16px}
+  .top-bar-title{font-size:16px}
+  .content{padding:20px 16px}
+  .form-grid{grid-template-columns:1fr}
+  .story-item,.video-item{grid-template-columns:1fr;grid-template-rows:auto}
+  .stats-bar{grid-template-columns:repeat(3,1fr)}
+  .stat-num{font-size:28px}
+  .card{padding:20px 16px}
+  .frames-unified-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE -->
+<div id="loginGate" style="position:fixed;inset:0;background:linear-gradient(135deg,#2A1A0E 0%,#1C1208 100%);z-index:99999;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif">
+  <div style="background:#FAF8F4;padding:56px 48px;width:380px;max-width:90vw;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4);border-top:3px solid #A8844A">
+    <div style="font-family:'Cormorant SC',serif;font-size:13px;letter-spacing:4px;text-transform:uppercase;color:#A8844A;margin-bottom:6px">GS Films</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-style:italic;font-weight:600;color:#2A1A0E;margin-bottom:36px">Admin Access</div>
+    <div style="position:relative;margin-bottom:20px">
+      <input type="password" id="adminPass" placeholder="Enter password"
+        style="width:100%;padding:15px 16px;font-size:13px;border:1px solid #DDD8CF;background:#F5F2EC;outline:none;font-family:'Montserrat',sans-serif;color:#2A1A0E;transition:border-color .2s;letter-spacing:.5px"
+        onkeydown="if(event.key==='Enter')checkAdminPass()"
+        onfocus="this.style.borderColor='#A8844A'"
+        onblur="this.style.borderColor='#DDD8CF'"/>
+    </div>
+    <button onclick="checkAdminPass()"
+      style="width:100%;padding:15px;background:#A8844A;color:#fff;border:none;cursor:pointer;font-size:10px;letter-spacing:3px;text-transform:uppercase;font-family:'Montserrat',sans-serif;transition:background .2s"
+      onmouseover="this.style.background='#C9A96E'"
+      onmouseout="this.style.background='#A8844A'">Enter</button>
+    <div id="passError" style="color:#C0392B;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-top:18px;display:none">Incorrect password — please try again</div>
+    <div style="margin-top:32px;padding-top:24px;border-top:1px solid #EDE8DF;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#7A7065">Authorized Personnel Only</div>
+  </div>
+</div>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-text">GS films</div>
+    <div class="sidebar-logo-sub">Admin Panel</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-group-label">Sections</div>
+      <a class="sidebar-link active" onclick="showPage('frames',this)" href="#">
+        <span class="icon">🖼</span> Photography Grid
+      </a>
+      <a class="sidebar-link" onclick="showPage('stories',this)" href="#">
+        <span class="icon">💌</span> Love Stories
+      </a>
+      <a class="sidebar-link" onclick="showPage('films',this)" href="#">
+        <span class="icon">🎬</span> Films
+      </a>
+      <a class="sidebar-link" onclick="showPage('intro',this)" href="#">
+        <span class="icon">🌿</span> Intro Section
+      </a>
+      <a class="sidebar-link" onclick="showPage('about',this)" href="#">
+        <span class="icon">👤</span> About Section
+      </a>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <a href="index.html" target="_blank">↗ Preview Website</a>
+    <a href="#" onclick="logoutAdmin();return false;">⎋ Log Out</a>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="top-bar">
+    <div class="top-bar-title" id="topBarTitle">Photography Grid</div>
+    <div class="top-bar-right">
+      <button class="save-btn" onclick="saveAll()">Save Changes</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- FRAMES PAGE -->
+    <div class="section-page active" id="page-frames">
+      <div class="section-header">
+        <h1>Photography Grid</h1>
+        <p>Manage the 14 image slots in the magazine-style collage grid on the homepage. Click any slot to upload a new image.</p>
+      </div>
+      <div class="stats-bar">
+        <div class="stat-card">
+          <div class="stat-num" id="framesFilledCount">0</div>
+          <div class="stat-label">Images Uploaded</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="framesEmptyCount">14</div>
+          <div class="stat-label">Empty Slots</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">14</div>
+          <div class="stat-label">Total Slots</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">All 14 Image Slots — Unified Grid</div>
+        <div class="frames-unified-grid" id="row1Grid" style="margin-bottom:6px"></div>
+        <div class="frames-unified-grid" id="row2Grid" style="margin-bottom:6px"></div>
+        <div class="frames-unified-grid" id="row3Grid"></div>
+      </div>
+      <p class="form-hint" style="margin-top:8px">
+        💡 <strong>Recommended size for all slots:</strong> 1000 × 1300 px (portrait) or 1300 × 1000 px (landscape). Any orientation works — the grid crops automatically. JPG preferred, max 10 MB.
+      </p>
+    </div>
+
+    <!-- STORIES PAGE -->
+    <div class="section-page" id="page-stories">
+      <div class="section-header">
+        <h1>Love Stories</h1>
+        <p>Add, edit, or remove couple story cards shown in the "Love Stories" section.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Current Stories</div>
+        <div class="story-list" id="storyList"></div>
+        <div id="noStoriesMsg" style="display:none;text-align:center;padding:40px 0;color:var(--grey);font-size:12px;letter-spacing:1px">No stories yet. Add one below.</div>
+      </div>
+      <div class="card" id="addStoryCard">
+        <div class="collapsible-header" onclick="toggleCollapsible('addStoryBody','addStoryToggle')">
+          <div class="card-title" style="margin-bottom:0">+ Add New Story</div>
+          <span class="collapsible-toggle" id="addStoryToggle">﹢</span>
+        </div>
+        <div class="collapsible-body" id="addStoryBody" style="max-height:0">
+          <div style="height:20px"></div>
+          <div class="add-form">
+            <div class="form-grid">
+              <div class="form-group full">
+                <label class="form-label">Couple Names *</label>
+                <input class="form-input" id="sName" placeholder="e.g. Ankith &amp; Ritu" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tag / Category *</label>
+                <input class="form-input" id="sTag" placeholder="e.g. Pre-Wedding" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Location &amp; Date *</label>
+                <input class="form-input" id="sLocation" placeholder="e.g. Udaipur, Apr 2026" />
+              </div>
+              <div class="form-group full">
+                <label class="form-label">Story Page Link</label>
+                <input class="form-input" id="sLink" placeholder="e.g. stories/ankith-ritu.html (leave blank for Coming Soon)" />
+                <p class="form-hint">This should match a page you've created in the /stories folder. Leave blank if the full story page isn't ready yet.</p>
+              </div>
+              <div class="form-group full">
+                <label class="form-label">Cover Image *</label>
+                <div class="img-picker-mini">
+                  <div class="img-picker-ph" id="sCoverPh">🖼</div>
+                  <img class="img-picker-preview" id="sCoverPreview" src="" alt=""/>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <button class="pick-btn" onclick="document.getElementById('sCoverFile').click()">Choose Image</button>
+                    <span style="font-size:9px;color:var(--grey);letter-spacing:1px">— or —</span>
+                    <input class="form-input" id="sCoverUrl" placeholder="Paste image URL" style="width:280px" oninput="previewCoverFromUrl()"/>
+                  </div>
+                  <input type="file" id="sCoverFile" accept="image/*" onchange="previewCover(event)"/>
+                </div>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn-primary" onclick="addStory()">Add Story</button>
+              <button class="btn-secondary" onclick="clearStoryForm()">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILMS PAGE -->
+    <div class="section-page" id="page-films">
+      <div class="section-header">
+        <h1>Films</h1>
+        <p>Add or remove wedding films shown in the "Light + Legacy" video section.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Current Films</div>
+        <div class="video-list" id="videoList"></div>
+        <div id="noFilmsMsg" style="display:none;text-align:center;padding:40px 0;color:var(--grey);font-size:12px;letter-spacing:1px">No films yet. Add one below.</div>
+      </div>
+      <div class="card">
+        <div class="collapsible-header" onclick="toggleCollapsible('addFilmBody','addFilmToggle')">
+          <div class="card-title" style="margin-bottom:0">+ Add New Film</div>
+          <span class="collapsible-toggle" id="addFilmToggle">﹢</span>
+        </div>
+        <div class="collapsible-body" id="addFilmBody" style="max-height:0">
+          <div style="height:20px"></div>
+          <div class="add-form">
+            <div class="form-grid">
+              <div class="form-group full">
+                <label class="form-label">Film Title *</label>
+                <input class="form-input" id="vTitle" placeholder="e.g. Ankith &amp; Ritu — A Love Story"/>
+              </div>
+              <div class="form-group full">
+                <label class="form-label">Video *</label>
+                <div class="url-input-wrap">
+                  <input class="form-input" id="vUrl" placeholder="Paste YouTube link or video URL here"/>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+                  <button class="pick-btn" type="button" onclick="document.getElementById('vFile').click()">Upload Video File</button>
+                  <span id="vFileStatus" style="font-size:10px;color:var(--grey);letter-spacing:.5px"></span>
+                </div>
+                <input type="file" id="vFile" accept="video/*" onchange="uploadFilmVideo(event)"/>
+                <p class="form-hint">Either paste a YouTube/video URL above, or upload a video file directly (max 100MB, MP4 recommended).</p>
+              </div>
+              <div class="form-group full">
+                <label class="form-label">Poster / Thumbnail Image</label>
+                <div class="img-picker-mini">
+                  <div class="img-picker-ph" id="vPosterPh">🎬</div>
+                  <img class="img-picker-preview" id="vPosterPreview" src="" alt=""/>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <button class="pick-btn" onclick="document.getElementById('vPosterFile').click()">Choose Image</button>
+                    <span style="font-size:9px;color:var(--grey);letter-spacing:1px">— or —</span>
+                    <input class="form-input" id="vPosterUrl" placeholder="Paste poster URL" style="width:280px" oninput="previewPosterFromUrl()"/>
+                  </div>
+                  <input type="file" id="vPosterFile" accept="image/*" onchange="previewPoster(event)"/>
+                </div>
+                <p class="form-hint">Only needed for direct video uploads — YouTube links use YouTube's own thumbnail automatically.</p>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn-primary" onclick="addFilm()">Add Film</button>
+              <button class="btn-secondary" onclick="clearFilmForm()">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTRO PAGE -->
+    <div class="section-page" id="page-intro">
+      <div class="section-header">
+        <h1>Intro Section</h1>
+        <p>Upload the left, right, and mobile images for the "Three Decades and Still Counting" intro section. Portrait 2:3 ratio recommended.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Left, Right &amp; Mobile Images</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:540px">
+          <div class="section-img-slot empty" id="introLeftSlot">
+            <span class="slot-num">LEFT</span>
+            <div class="slot-overlay"><span class="slot-icon">+</span><span class="slot-txt">Upload image</span></div>
+          </div>
+          <div class="section-img-slot empty" id="introRightSlot">
+            <span class="slot-num">RIGHT</span>
+            <div class="slot-overlay"><span class="slot-icon">+</span><span class="slot-txt">Upload image</span></div>
+          </div>
+          <div class="section-img-slot empty" id="introMobileSlot">
+            <span class="slot-num">MOBILE</span>
+            <div class="slot-overlay"><span class="slot-icon">+</span><span class="slot-txt">Upload image</span></div>
+          </div>
+        </div>
+        <p class="form-hint" style="margin-top:14px">💡 Portrait images, 800 × 1200 px (2:3 ratio). If Mobile is left empty, the site falls back to the Left image on small screens. JPG preferred, max 10 MB.</p>
+      </div>
+    </div>
+
+    <!-- ABOUT PAGE -->
+    <div class="section-page" id="page-about">
+      <div class="section-header">
+        <h1>About Section</h1>
+        <p>Upload the left, right, and mobile images for the "A Steady Hand Through Changing Times" about section. Portrait 2:3 ratio recommended.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Left, Right &amp; Mobile Images</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:540px">
+          <div class="section-img-slot empty" id="aboutLeftSlot">
+            <span class="slot-num">LEFT</span>
+            <div class="slot-overlay"><span class="slot-icon">+</span><span class="slot-txt">Upload image</span></div>
+          </div>
+          <div class="section-img-slot empty" id="aboutRightSlot">
+            <span class="slot-num">RIGHT</span>
+            <div class="slot-overlay"><span class="slot-icon">+</span><span class="slot-txt">Upload image</span></div>
+          </div>
+          <div class="section-img-slot empty" id="aboutMobileSlot">
+            <span class="slot-num">MOBILE</span>
+            <div class="slot-overlay"><span class="slot-icon">+</span><span class="slot-txt">Upload image</span></div>
+          </div>
+        </div>
+        <p class="form-hint" style="margin-top:14px">💡 Portrait images, 800 × 1200 px (2:3 ratio). If Mobile is left empty, the site falls back to the Left image on small screens. JPG preferred, max 10 MB.</p>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- EDIT STORY MODAL -->
+<div class="modal-bg" id="editStoryModal">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closeModal('editStoryModal')">✕</button>
+    <h3>Edit Story</h3>
+    <input type="hidden" id="editStoryId"/>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Couple Names</label>
+        <input class="form-input" id="editSName"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tag / Category</label>
+        <input class="form-input" id="editSTag"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Location &amp; Date</label>
+        <input class="form-input" id="editSLocation"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Story Page Link</label>
+        <input class="form-input" id="editSLink" placeholder="e.g. stories/ankith-ritu.html"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Cover Image</label>
+        <div class="img-picker-mini">
+          <img class="img-picker-preview show" id="editSCoverPreview" src="" alt="" style="width:80px;height:80px"/>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="pick-btn" onclick="document.getElementById('editSCoverFile').click()">Change Image</button>
+            <input class="form-input" id="editSCoverUrl" placeholder="or paste URL" style="width:260px" oninput="editPreviewCoverUrl()"/>
+          </div>
+          <input type="file" id="editSCoverFile" accept="image/*" onchange="editPreviewCover(event)"/>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-primary" onclick="saveEditedStory()">Save Changes</button>
+      <button class="btn-secondary" onclick="closeModal('editStoryModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT FILM MODAL -->
+<div class="modal-bg" id="editFilmModal">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closeModal('editFilmModal')">✕</button>
+    <h3>Edit Film</h3>
+    <input type="hidden" id="editFilmId"/>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label class="form-label">Film Title</label>
+        <input class="form-input" id="editVTitle"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Video</label>
+        <input class="form-input" id="editVUrl" placeholder="Paste YouTube link or video URL"/>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+          <button class="pick-btn" type="button" onclick="document.getElementById('editVFile').click()">Upload Video File</button>
+          <span id="editVFileStatus" style="font-size:10px;color:var(--grey);letter-spacing:.5px"></span>
+        </div>
+        <input type="file" id="editVFile" accept="video/*" onchange="uploadEditFilmVideo(event)"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Poster Image</label>
+        <div class="img-picker-mini">
+          <img class="img-picker-preview show" id="editVPosterPreview" src="" alt="" style="width:100px;height:70px"/>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="pick-btn" onclick="document.getElementById('editVPosterFile').click()">Change Poster</button>
+            <input class="form-input" id="editVPosterUrl" placeholder="or paste URL" style="width:260px" oninput="editPreviewPosterUrl()"/>
+          </div>
+          <input type="file" id="editVPosterFile" accept="image/*" onchange="editPreviewPoster(event)"/>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-primary" onclick="saveEditedFilm()">Save Changes</button>
+      <button class="btn-secondary" onclick="closeModal('editFilmModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-bg" id="confirmModal">
+  <div class="modal-box" style="max-width:380px;text-align:center">
+    <h3 id="confirmTitle">Are you sure?</h3>
+    <p id="confirmMsg" style="font-size:12px;color:var(--grey);margin:12px 0 28px;line-height:1.7"></p>
+    <div class="form-actions" style="justify-content:center">
+      <button class="btn-primary" id="confirmYes" style="background:var(--danger)">Delete</button>
+      <button class="btn-secondary" onclick="closeModal('confirmModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   SETUP REQUIRED — read this before using the admin panel:
+
+   1) ADMIN PASSWORD — change it below.
+   2) JSONBIN — create a free bin at https://jsonbin.io, then paste
+      your Bin ID and X-Master-Key below. Paste the SAME Bin ID and
+      key into index.html's <script> (BIN_ID / API_KEY constants)
+      so the live site can read what you save here.
+   3) CLOUDINARY — create a free unsigned upload preset in your
+      Cloudinary account (cloud name below is the one your images
+      already use: dvsfztcmm) and paste the preset name below.
+══════════════════════════════════════════════════════════════ */
+const ADMIN_PASSWORD = 'GSFilms.in1';
+
+const BIN_ID = 'PLACEHOLDER_BIN_ID';
+const API_KEY = 'PLACEHOLDER_API_KEY';
+const BIN_URL = 'https://api.jsonbin.io/v3/b/' + BIN_ID;
+
+const CLOUDINARY_CLOUD = 'dvsfztcmm';
+const CLOUDINARY_PRESET = 'PLACEHOLDER_UPLOAD_PRESET';
+
+if(sessionStorage.getItem('gsf_admin_auth') === 'true'){
+  document.getElementById('loginGate').style.display = 'none';
+}
+function checkAdminPass(){
+  const val = document.getElementById('adminPass').value;
+  if(val === ADMIN_PASSWORD){
+    sessionStorage.setItem('gsf_admin_auth','true');
+    document.getElementById('loginGate').style.display = 'none';
+  } else {
+    document.getElementById('passError').style.display = 'block';
+  }
+}
+function logoutAdmin(){
+  sessionStorage.removeItem('gsf_admin_auth');
+  location.reload();
+}
+
+const STORAGE_KEY = 'gsfilms_admin_v1';
+
+let state = {
+  frames: Array(14).fill(null),
+  stories: [],
+  films: [],
+  intro: { left: null, right: null, mobile: null },
+  about: { left: null, right: null, mobile: null }
+};
+
+try{
+  const s = localStorage.getItem(STORAGE_KEY);
+  if(s){
+    const parsed = JSON.parse(s);
+    state = {...state, ...parsed};
+    if(!state.intro) state.intro = {left:null,right:null,mobile:null};
+    if(!state.about) state.about = {left:null,right:null,mobile:null};
+  }
+}catch(e){}
+
+function persist(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch(e){ showToast('Could not save locally — storage full','error'); }
+}
+
+const pageTitles = {frames:'Photography Grid',stories:'Love Stories',films:'Films',intro:'Intro Section',about:'About Section'};
+
+function showPage(id, el){
+  document.querySelectorAll('.section-page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('topBarTitle').textContent = pageTitles[id];
+}
+
+let toastTimer;
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+(type==='error'?'error':type==='success'?'success-toast':'');
+  t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function toggleCollapsible(bodyId,toggleId){
+  const body=document.getElementById(bodyId),tog=document.getElementById(toggleId);
+  if(body.style.maxHeight==='0px'||!body.style.maxHeight){body.style.maxHeight=body.scrollHeight+400+'px';tog.textContent='✕';}
+  else{body.style.maxHeight='0px';tog.textContent='﹢';}
+}
+
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
+
+async function saveAll(){
+  persist();
+  if(BIN_ID === 'PLACEHOLDER_BIN_ID'){
+    showToast('Saved locally — connect JSONBin to publish live (see script comments)','error');
+    return;
+  }
+  try{
+    const res = await fetch(BIN_URL, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':API_KEY,'X-Bin-Versioning':'false'},
+      body:JSON.stringify(state)
+    });
+    if(res.ok) showToast('Saved & published successfully','success');
+    else showToast('Save failed — try again','error');
+  } catch(e){
+    showToast('Could not connect to server','error');
+  }
+}
+
+/* ─── CLOUDINARY UPLOAD HELPER ─────────────────────────────── */
+async function uploadToCloudinary(file, resourceType){
+  resourceType = resourceType || 'image';
+  if(CLOUDINARY_PRESET === 'PLACEHOLDER_UPLOAD_PRESET'){
+    showToast('Connect a Cloudinary upload preset first (see script comments)','error');
+    return null;
+  }
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_PRESET);
+  if(resourceType === 'video') fd.append('resource_type','video');
+  const res = await fetch('https://api.cloudinary.com/v1_1/'+CLOUDINARY_CLOUD+'/'+resourceType+'/upload',{method:'POST',body:fd});
+  const data = await res.json();
+  return data.secure_url || null;
+}
+
+/* ─── FRAMES (14 slots, mirrors the site's magazine grid) ────── */
+
+function renderFrames(){
+  renderFrameRow('row1Grid',[0,1,2,3,4]);
+  renderFrameRow2();
+  renderFrameRow('row3Grid',[9,10,11,12,13]);
+  updateFrameStats();
+}
+
+function makeFrameSlot(idx){
+  const data = state.frames[idx];
+  const slot = document.createElement('div');
+  slot.className = 'img-slot ' + (data ? 'has-image' : 'empty');
+  slot.dataset.idx = idx;
+  slot.innerHTML =
+    '<span class="slot-num">' + String(idx+1).padStart(2,'0') + '</span>'
+    + (data ? '<img src="'+data+'" alt="Slot '+(idx+1)+'"/>' : '')
+    + '<div class="slot-overlay"><span class="slot-icon">'+(data?'✎':'+')+'</span><span class="slot-txt">'+(data?'Change':'Upload')+'</span></div>'
+    + (data ? '<button class="remove-img" title="Remove" onclick="removeFrame(event,'+idx+')">✕</button>' : '');
+  slot.addEventListener('click', ()=>triggerFrameUpload(idx));
+  return slot;
+}
+
+function renderFrameRow(gridId, indices){
+  const grid = document.getElementById(gridId);
+  grid.innerHTML = '';
+  indices.forEach(idx => grid.appendChild(makeFrameSlot(idx)));
+}
+
+function renderFrameRow2(){
+  const grid = document.getElementById('row2Grid');
+  grid.innerHTML = '';
+  [5,6,'text',7,8].forEach(idx => {
+    if(idx === 'text'){
+      const tc = document.createElement('div');
+      tc.className = 'row2-text-cell';
+      tc.innerHTML =
+        '<p style="font-family:Cormorant Garamond,serif;font-size:12px;font-style:italic;color:var(--brown)">capturing three decades of</p>'
+        +'<p style="font-family:Cormorant Garamond,serif;font-size:20px;font-style:italic;font-weight:600;color:var(--brown);line-height:1.1">"Moments<br>Worth Keeping"</p>'
+        +'<p style="font-size:10px;letter-spacing:2px;color:var(--brown)">in every frame</p>'
+        +'<p style="font-size:8px;margin-top:8px;color:var(--gold);letter-spacing:1.5px">TEXT OVERLAY<br>(not editable here)</p>';
+      grid.appendChild(tc);
+    } else {
+      grid.appendChild(makeFrameSlot(idx));
+    }
+  });
+}
+
+async function triggerFrameUpload(idx){
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async e => {
+    const file = e.target.files[0]; if(!file) return;
+    if(file.size > 10*1024*1024){showToast('Image too large — max 10MB','error');return;}
+    showToast('Uploading image...','');
+    const url = await uploadToCloudinary(file,'image');
+    if(url){state.frames[idx]=url;renderFrames();showToast('Slot '+(idx+1)+' updated','success');}
+    else showToast('Upload failed','error');
+  };
+  inp.click();
+}
+
+function removeFrame(e,idx){e.stopPropagation();state.frames[idx]=null;renderFrames();showToast('Slot '+(idx+1)+' cleared');}
+
+function updateFrameStats(){
+  const filled = state.frames.filter(Boolean).length;
+  document.getElementById('framesFilledCount').textContent = filled;
+  document.getElementById('framesEmptyCount').textContent = 14-filled;
+}
+
+/* ─── STORIES ─────────────────────────────────────────────────── */
+
+function renderStories(){
+  const list = document.getElementById('storyList');
+  const noMsg = document.getElementById('noStoriesMsg');
+  list.innerHTML = '';
+  if(!state.stories.length){noMsg.style.display='block';return;}
+  noMsg.style.display = 'none';
+  state.stories.forEach(s => {
+    const item = document.createElement('div');
+    item.className = 'story-item';
+    item.innerHTML =
+      '<div class="story-thumb-wrap" onclick="openEditStory(\''+s.id+'\')">'
+      +'<img src="'+s.cover+'" alt="'+s.name+'"/>'
+      +'<div class="story-thumb-overlay">✎</div></div>'
+      +'<div class="story-info">'
+      +'<span class="story-info-tag">'+(s.tag||'Wedding')+' &middot; '+(s.location||'')+'</span>'
+      +'<div class="story-info-name">'+s.name+'</div>'
+      +'<div style="color:var(--grey);font-size:10px">'+(s.link||'No link set — shows as "Coming Soon"')+'</div>'
+      +'</div>'
+      +'<div class="story-actions">'
+      +'<button class="story-action-btn" onclick="openEditStory(\''+s.id+'\')">Edit</button>'
+      +'<button class="story-action-btn danger" onclick="confirmDelete(\'story\',\''+s.id+'\',\''+s.name+'\')">Delete</button>'
+      +'</div>';
+    list.appendChild(item);
+  });
+}
+
+let sCoverData = '';
+async function previewCover(e){
+  const file = e.target.files[0]; if(!file) return;
+  if(file.size>10*1024*1024){showToast('Image too large — max 10MB','error');return;}
+  showToast('Uploading cover image...','');
+  const url = await uploadToCloudinary(file,'image');
+  if(url){
+    sCoverData=url;
+    document.getElementById('sCoverPreview').src=url;
+    document.getElementById('sCoverPreview').classList.add('show');
+    document.getElementById('sCoverPh').style.display='none';
+    showToast('Cover uploaded!','success');
+  } else showToast('Upload failed','error');
+}
+function previewCoverFromUrl(){
+  const url=document.getElementById('sCoverUrl').value.trim();
+  if(!url)return;
+  sCoverData=url;
+  document.getElementById('sCoverPreview').src=url;
+  document.getElementById('sCoverPreview').classList.add('show');
+  document.getElementById('sCoverPh').style.display='none';
+}
+
+function addStory(){
+  const name=document.getElementById('sName').value.trim();
+  const tag=document.getElementById('sTag').value.trim();
+  const location=document.getElementById('sLocation').value.trim();
+  const link=document.getElementById('sLink').value.trim();
+  const cover=sCoverData||document.getElementById('sCoverUrl').value.trim();
+  if(!name){showToast('Please enter couple names','error');return;}
+  if(!tag){showToast('Please enter a tag/category','error');return;}
+  if(!location){showToast('Please enter a location & date','error');return;}
+  if(!cover){showToast('Please add a cover image','error');return;}
+  state.stories.push({id:'s'+Date.now(),name,tag,location,link,cover});
+  renderStories();clearStoryForm();
+  document.getElementById('addStoryBody').style.maxHeight='0px';
+  document.getElementById('addStoryToggle').textContent='﹢';
+  showToast('Story added — remember to Save Changes','success');
+}
+
+function clearStoryForm(){
+  ['sName','sTag','sLocation','sLink','sCoverUrl'].forEach(id=>document.getElementById(id).value='');
+  sCoverData='';
+  document.getElementById('sCoverPreview').classList.remove('show');
+  document.getElementById('sCoverPh').style.display='flex';
+}
+
+let editCoverData='';
+function openEditStory(id){
+  const s=state.stories.find(x=>x.id===id);if(!s)return;
+  document.getElementById('editStoryId').value=id;
+  document.getElementById('editSName').value=s.name;
+  document.getElementById('editSTag').value=s.tag||'';
+  document.getElementById('editSLocation').value=s.location||'';
+  document.getElementById('editSLink').value=s.link||'';
+  document.getElementById('editSCoverPreview').src=s.cover;
+  document.getElementById('editSCoverUrl').value='';
+  editCoverData=s.cover;
+  openModal('editStoryModal');
+}
+async function editPreviewCover(e){
+  const file=e.target.files[0];if(!file)return;
+  showToast('Uploading...','');
+  const url = await uploadToCloudinary(file,'image');
+  if(url){editCoverData=url;document.getElementById('editSCoverPreview').src=url;}
+}
+function editPreviewCoverUrl(){
+  const url=document.getElementById('editSCoverUrl').value.trim();
+  if(url){editCoverData=url;document.getElementById('editSCoverPreview').src=url;}
+}
+function saveEditedStory(){
+  const id=document.getElementById('editStoryId').value;
+  const idx=state.stories.findIndex(x=>x.id===id);if(idx<0)return;
+  state.stories[idx]={
+    ...state.stories[idx],
+    name:document.getElementById('editSName').value.trim(),
+    tag:document.getElementById('editSTag').value.trim(),
+    location:document.getElementById('editSLocation').value.trim(),
+    link:document.getElementById('editSLink').value.trim(),
+    cover:editCoverData||state.stories[idx].cover
+  };
+  renderStories();closeModal('editStoryModal');showToast('Story updated — remember to Save Changes','success');
+}
+
+/* ─── FILMS ─────────────────────────────────────────────────── */
+
+function renderFilms(){
+  const list=document.getElementById('videoList');
+  const noMsg=document.getElementById('noFilmsMsg');
+  list.innerHTML='';
+  if(!state.films.length){noMsg.style.display='block';return;}
+  noMsg.style.display='none';
+  state.films.forEach(v=>{
+    const item=document.createElement('div');
+    item.className='video-item';
+    item.innerHTML=
+      '<div class="video-thumb-wrap">'
+      +(v.poster?'<img src="'+v.poster+'" alt="'+v.title+'"/>':'')
+      +'<div class="video-thumb-icon"><div class="play-badge"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>'
+      +'</div>'
+      +'<div class="video-info">'
+      +'<span class="video-info-tag">Wedding Film</span>'
+      +'<div class="video-info-name">'+v.title+'</div>'
+      +'<div class="video-info-url">'+(v.url.length>70?v.url.slice(0,70)+'…':v.url)+'</div>'
+      +'</div>'
+      +'<div class="video-actions">'
+      +'<button class="video-action-btn" onclick="openEditFilm(\''+v.id+'\')">Edit</button>'
+      +'<button class="video-action-btn danger" onclick="confirmDelete(\'film\',\''+v.id+'\',\''+v.title+'\')">Remove</button>'
+      +'</div>';
+    list.appendChild(item);
+  });
+}
+
+let vPosterData='';
+async function previewPoster(e){
+  const file=e.target.files[0];if(!file)return;
+  showToast('Uploading poster...','');
+  const url = await uploadToCloudinary(file,'image');
+  if(url){
+    vPosterData=url;
+    document.getElementById('vPosterPreview').src=url;
+    document.getElementById('vPosterPreview').classList.add('show');
+    document.getElementById('vPosterPh').style.display='none';
+    showToast('Poster uploaded!','success');
+  } else showToast('Upload failed','error');
+}
+function previewPosterFromUrl(){
+  const url=document.getElementById('vPosterUrl').value.trim();
+  if(!url)return;
+  vPosterData=url;
+  document.getElementById('vPosterPreview').src=url;
+  document.getElementById('vPosterPreview').classList.add('show');
+  document.getElementById('vPosterPh').style.display='none';
+}
+async function uploadFilmVideo(e){
+  const file=e.target.files[0]; if(!file) return;
+  if(file.size > 100*1024*1024){showToast('Video too large — max 100MB','error');return;}
+  document.getElementById('vFileStatus').textContent='Uploading video... this may take a moment';
+  showToast('Uploading video...','');
+  const url = await uploadToCloudinary(file,'video');
+  if(url){
+    document.getElementById('vUrl').value=url;
+    document.getElementById('vFileStatus').textContent='✓ Video uploaded successfully';
+    showToast('Video uploaded!','success');
+  } else {
+    document.getElementById('vFileStatus').textContent='';
+    showToast('Video upload failed','error');
+  }
+}
+
+function addFilm(){
+  const title=document.getElementById('vTitle').value.trim();
+  const url=document.getElementById('vUrl').value.trim();
+  const poster=vPosterData||document.getElementById('vPosterUrl').value.trim();
+  if(!title){showToast('Please enter a film title','error');return;}
+  if(!url){showToast('Please enter a video URL','error');return;}
+  state.films.push({id:'v'+Date.now(),title,url,poster});
+  renderFilms();clearFilmForm();
+  document.getElementById('addFilmBody').style.maxHeight='0px';
+  document.getElementById('addFilmToggle').textContent='﹢';
+  showToast('Film added — remember to Save Changes','success');
+}
+
+function clearFilmForm(){
+  ['vTitle','vUrl','vPosterUrl'].forEach(id=>document.getElementById(id).value='');
+  vPosterData='';
+  document.getElementById('vPosterPreview').classList.remove('show');
+  document.getElementById('vPosterPh').style.display='flex';
+  document.getElementById('vFileStatus').textContent='';
+}
+
+let editPosterData='';
+function openEditFilm(id){
+  const v=state.films.find(x=>x.id===id);if(!v)return;
+  document.getElementById('editFilmId').value=id;
+  document.getElementById('editVTitle').value=v.title;
+  document.getElementById('editVUrl').value=v.url;
+  document.getElementById('editVPosterPreview').src=v.poster||'';
+  document.getElementById('editVPosterUrl').value='';
+  editPosterData=v.poster||'';
+  openModal('editFilmModal');
+}
+async function editPreviewPoster(e){
+  const file=e.target.files[0];if(!file)return;
+  showToast('Uploading...','');
+  const url = await uploadToCloudinary(file,'image');
+  if(url){editPosterData=url;document.getElementById('editVPosterPreview').src=url;}
+}
+function editPreviewPosterUrl(){
+  const url=document.getElementById('editVPosterUrl').value.trim();
+  if(url){editPosterData=url;document.getElementById('editVPosterPreview').src=url;}
+}
+async function uploadEditFilmVideo(e){
+  const file=e.target.files[0]; if(!file) return;
+  if(file.size > 100*1024*1024){showToast('Video too large — max 100MB','error');return;}
+  document.getElementById('editVFileStatus').textContent='Uploading video...';
+  showToast('Uploading video...','');
+  const url = await uploadToCloudinary(file,'video');
+  if(url){
+    document.getElementById('editVUrl').value=url;
+    document.getElementById('editVFileStatus').textContent='✓ Uploaded';
+    showToast('Video uploaded!','success');
+  } else showToast('Video upload failed','error');
+}
+function saveEditedFilm(){
+  const id=document.getElementById('editFilmId').value;
+  const idx=state.films.findIndex(x=>x.id===id);if(idx<0)return;
+  state.films[idx]={
+    ...state.films[idx],
+    title:document.getElementById('editVTitle').value.trim(),
+    url:document.getElementById('editVUrl').value.trim(),
+    poster:editPosterData||state.films[idx].poster
+  };
+  renderFilms();closeModal('editFilmModal');showToast('Film updated — remember to Save Changes','success');
+}
+
+/* ─── CONFIRM DELETE ─────────────────────────────────────────── */
+
+function confirmDelete(type,id,name){
+  document.getElementById('confirmTitle').textContent='Remove this '+(type==='story'?'story':'film')+'?';
+  document.getElementById('confirmMsg').textContent='"'+name+'" will be permanently removed. This cannot be undone.';
+  document.getElementById('confirmYes').onclick=()=>{
+    if(type==='story'){state.stories=state.stories.filter(x=>x.id!==id);renderStories();}
+    else{state.films=state.films.filter(x=>x.id!==id);renderFilms();}
+    closeModal('confirmModal');showToast('Removed — remember to Save Changes');
+  };
+  openModal('confirmModal');
+}
+
+/* ─── INTRO / ABOUT SECTION IMAGES (left / right / mobile) ────── */
+
+const SECTION_SLOTS = ['introLeft','introRight','introMobile','aboutLeft','aboutRight','aboutMobile'];
+
+function getSectionAndField(key){
+  const section = key.startsWith('intro') ? 'intro' : 'about';
+  const field = key.replace(/^intro|^about/,'').toLowerCase();
+  return {section, field};
+}
+
+function renderSectionImgs(){
+  SECTION_SLOTS.forEach(key => {
+    const {section, field} = getSectionAndField(key);
+    const url = state[section][field];
+    const slot = document.getElementById(key+'Slot');
+    if(!slot) return;
+
+    const fresh = slot.cloneNode(false);
+    fresh.className = 'section-img-slot ' + (url ? 'has-image' : 'empty');
+    const label = field.toUpperCase();
+
+    if(url){
+      fresh.innerHTML =
+        '<img src="'+url+'" alt="'+label+'"/>'
+        +'<span class="slot-num">'+label+'</span>'
+        +'<div class="slot-overlay"><span class="slot-icon">✎</span><span class="slot-txt">Change image</span></div>'
+        +'<button class="remove-img" title="Remove">✕</button>';
+      fresh.querySelector('.remove-img').addEventListener('click', e => {
+        e.stopPropagation();
+        removeSectionImg(key);
+      });
+    } else {
+      fresh.innerHTML =
+        '<span class="slot-num">'+label+'</span>'
+        +'<div class="slot-overlay"><span class="slot-icon">+</span><span class="slot-txt">Upload image</span></div>';
+    }
+
+    fresh.addEventListener('click', () => uploadSectionImgClick(key));
+    slot.parentNode.replaceChild(fresh, slot);
+    fresh.id = key + 'Slot';
+  });
+}
+
+async function uploadSectionImgClick(key){
+  const {section, field} = getSectionAndField(key);
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async e => {
+    const file = e.target.files[0]; if(!file) return;
+    if(file.size > 10*1024*1024){showToast('Image too large — max 10MB','error');return;}
+    showToast('Uploading...','');
+    const url = await uploadToCloudinary(file,'image');
+    if(url){
+      state[section][field] = url;
+      renderSectionImgs();
+      showToast('Image uploaded — remember to Save Changes','success');
+    } else {
+      showToast('Upload failed — check Cloudinary preset','error');
+    }
+  };
+  inp.click();
+}
+
+function removeSectionImg(key){
+  const {section, field} = getSectionAndField(key);
+  state[section][field] = null;
+  renderSectionImgs();
+  showToast('Image removed — remember to Save Changes');
+}
+
+/* ─── INIT ─────────────────────────────────────────────────────── */
+async function loadFromBin(){
+  if(BIN_ID !== 'PLACEHOLDER_BIN_ID'){
+    try{
+      const res = await fetch(BIN_URL + '/latest?t=' + Date.now(), {
+        headers: {'X-Master-Key': API_KEY}
+      });
+      const data = await res.json();
+      if(data.record){
+        state = {...state, ...data.record};
+        if(!state.intro) state.intro={left:null,right:null,mobile:null};
+        if(!state.about) state.about={left:null,right:null,mobile:null};
+        persist();
+      }
+    } catch(e){ console.log('Could not load from server',e); }
+  }
+  renderFrames();
+  renderStories();
+  renderFilms();
+  renderSectionImgs();
+}
+loadFromBin();
+</script>
+</body>
+</html>
