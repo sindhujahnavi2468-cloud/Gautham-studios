@@ -28,7 +28,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 nav.nav-hidden{transform:translateY(-100%)}
 nav.scrolled{background:rgba(250,248,244,.97);padding:10px 48px;box-shadow:0 1px 0 var(--rule)}
 
-/* ── LOGO (vector, since no image asset yet) ── */
+/* ── LOGO ── */
 .logo-mark{display:flex;align-items:center;gap:12px;text-decoration:none;cursor:pointer}
 .logo-aperture{width:46px;height:46px;flex-shrink:0;transition:width .3s,height .3s}
 nav.scrolled .logo-aperture{width:36px;height:36px}
@@ -42,10 +42,10 @@ nav.scrolled .logo-main{color:var(--brown)}
 .logo-main em{font-style:italic;font-weight:500;color:var(--gold-l)}
 nav.scrolled .logo-main em{color:var(--gold)}
 .logo-sub{font-size:7.5px;letter-spacing:2.2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-top:3px;white-space:nowrap}
-nav.scrolled .logo-sub{color:var(--grey)
+nav.scrolled .logo-sub{color:var(--grey)}
 .logo-mark img{height:52px;object-fit:contain;transition:height .3s}
 nav.scrolled .logo-mark img{height:38px}
-.footer-brand .logo-mark img{height:90px}}
+.footer-brand .logo-mark img{height:90px}
 
 .nav-links{display:flex;gap:34px;list-style:none;align-items:center}
 .nav-links a{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.88);text-decoration:none;transition:color .2s}
@@ -442,7 +442,6 @@ nav.scrolled .hamburger span{background:var(--charcoal)}
     <li><a href="#about">About</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  
   <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -614,8 +613,14 @@ nav.scrolled .hamburger span{background:var(--charcoal)}
         <a href="https://www.instagram.com/gsfilms.in/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="fs-icon" style="position:static;background:rgba(168,132,74,.08);border-color:rgba(168,132,74,.25);color:var(--brown)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
         </a>
+        <a href="https://www.youtube.com/@gautamstudiofilms" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="fs-icon" style="position:static;background:rgba(168,132,74,.08);border-color:rgba(168,132,74,.25);color:var(--brown)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="3"/><polygon points="10,9 16,12 10,15" fill="currentColor" stroke="none"/></svg>
+        </a>
         <a href="https://wa.me/918003822122" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" class="fs-icon" style="position:static;background:rgba(168,132,74,.08);border-color:rgba(168,132,74,.25);color:var(--brown)">
           <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.06-1.33A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm5.2 14.2c-.22.62-1.28 1.18-1.76 1.25-.45.07-1.02.1-1.65-.1-.38-.12-.87-.28-1.5-.55-2.64-1.14-4.36-3.8-4.5-3.99-.13-.18-1.07-1.42-1.07-2.7 0-1.29.67-1.92.91-2.18.24-.27.52-.33.7-.33.18 0 .35.002.5.01.16.008.38-.06.6.46.22.53.74 1.81.8 1.94.07.13.11.28.02.45-.09.17-.14.27-.27.42-.13.15-.27.33-.39.44-.13.12-.26.25-.11.5.15.25.68 1.12 1.46 1.81.99.88 1.83 1.16 2.1 1.29.27.13.43.11.59-.07.16-.18.68-.79.86-1.07.18-.27.36-.23.6-.14.24.1 1.5.71 1.76.84.26.13.43.2.49.31.07.11.07.62-.15 1.24z"/></svg>
+        </a>
+        <a href="https://maps.app.goo.gl/Zrv5Er8Ms7t3542p8?g_st=ac" target="_blank" rel="noopener noreferrer" aria-label="Location" class="fs-icon" style="position:static;background:rgba(168,132,74,.08);border-color:rgba(168,132,74,.25);color:var(--brown)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
         </a>
       </div>
 
@@ -627,7 +632,8 @@ nav.scrolled .hamburger span{background:var(--charcoal)}
         </div>
         <div class="det-block">
           <span class="det-label">Location</span>
-          India &nbsp;&middot;&nbsp; Available Worldwide
+          India &nbsp;&middot;&nbsp; Available Worldwide<br>
+          <a href="https://maps.app.goo.gl/Zrv5Er8Ms7t3542p8?g_st=ac" target="_blank">View on Google Maps</a>
         </div>
         <div class="det-block">
           <span class="det-label">Business Hours</span>
@@ -702,6 +708,7 @@ nav.scrolled .hamburger span{background:var(--charcoal)}
       <a href="#" class="logo-mark" style="pointer-events:none">
         <img src="https://res.cloudinary.com/dvsfztcmm/image/upload/v1784208964/png_stu_qrs9bv.png" alt="GS Films"/>
       </a>
+      <p class="footer-tagline">Every Frame, A Memory Kept Forever</p>
       <p class="footer-location">India &nbsp;&middot;&nbsp; Worldwide</p>
     </div>
     <div class="footer-col">
@@ -718,6 +725,7 @@ nav.scrolled .hamburger span{background:var(--charcoal)}
       <a href="https://www.youtube.com/@gautamstudiofilms" target="_blank">YouTube</a>
       <a href="https://wa.me/918003822122" target="_blank">WhatsApp</a>
       <a href="https://maps.app.goo.gl/Zrv5Er8Ms7t3542p8?g_st=ac" target="_blank">Location</a>
+    </div>
     <div class="footer-col">
       <p class="footer-col-title">Get In Touch</p>
       <a href="tel:+918003822122">+91 80038 22122</a>
