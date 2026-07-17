@@ -620,8 +620,7 @@ function persist(){
   catch(e){ showToast('Could not save locally — storage full','error'); }
 }
 
-const pageTitles = {frames:'Photography Grid',stories:'Love Stories',films:'Films',intro:'Intro Section',about:'About Section'};
-
+const pageTitles = {hero:'Hero Section',frames:'Photography Grid',stories:'Love Stories',films:'Films',intro:'Intro Section',about:'About Section'};
 function showPage(id, el){
   document.querySelectorAll('.section-page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
