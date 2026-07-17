@@ -769,6 +769,7 @@ async function loadFromBin(){
     });
     const data = await res.json();
     const state = data.record;
+    if(state.hero) renderHeroOnSite(state.hero);
     if(state.frames) renderFramesOnSite(state.frames);
     if(state.stories) renderStoriesOnSite(state.stories);
     if(state.films) renderFilmsOnSite(state.films);
