@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GS Films — Story</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500,italic,0,600;1,400;1,600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#FAF8F4;color:#2A1A0E;font-family:'Montserrat',sans-serif;min-height:100vh}
+.back-link{display:inline-block;padding:20px 24px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#A8844A;text-decoration:none}
+.story-hero{width:100%;max-height:82vh;overflow:hidden}
+.story-hero img{width:100%;height:100%;max-height:82vh;object-fit:cover;display:block}
+.story-header{text-align:center;padding:44px 24px}
+.story-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#A8844A;margin-bottom:14px}
+.story-header h1{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:clamp(30px,5vw,54px);color:#2A1A0E}
+.story-text{max-width:700px;margin:0 auto;padding:0 24px 60px;font-family:'Cormorant Garamond',serif;font-size:18px;line-height:1.9;color:#2A1A0E;text-align:center}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:4px;padding:0 4px 60px}
+.gallery img{width:100%;height:340px;object-fit:cover;display:block}
+.not-found{text-align:center;padding:120px 24px}
+.not-found h1{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:32px;margin-bottom:16px}
+.not-found a{color:#A8844A;text-decoration:none;font-size:12px;letter-spacing:2px;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div id="app">
+  <a href="/" class="back-link">&larr; GS Films</a>
+  <p style="text-align:center;padding:80px 24px;color:#7A7065">Loading story…</p>
+</div>
+<script>
+const BIN_ID = 'PLACEHOLDER_BIN_ID';
+const API_KEY = 'PLACEHOLDER_API_KEY';
+
+function getSlug(){
+  return location.pathname.replace(/^\/+|\/+$/g,'').split('/').pop();
+}
+
+async function loadStory(){
+  const slug = getSlug();
+  const app = document.getElementById('app');
+  try{
+    const res = await fetch('https://api.jsonbin.io/v3/b/'+BIN_ID+'/latest?t='+Date.now(),{headers:{'X-Master-Key':API_KEY}});
+    const data = await res.json();
+    const stories = (data.record && data.record.stories) || [];
+    const story = stories.find(s => s.link === slug);
+    if(!story){
+      app.innerHTML = '<a href="/" class="back-link">&larr; GS Films</a><div class="not-found"><h1>Story not found</h1><a href="/">Back to GS Films</a></div>';
+      return;
+    }
+    document.title = story.name + ' — GS Films';
+    let galleryHtml = '';
+    if(story.gallery && story.gallery.length){
+      galleryHtml = '<div class="gallery">' + story.gallery.map(g=>'<img src="'+g+'" alt="'+story.name+'"/>').join('') + '</div>';
+    }
+    app.innerHTML =
+      '<a href="/" class="back-link">&larr; GS Films</a>' +
+      '<div class="story-hero"><img src="'+story.cover+'" alt="'+story.name+'"/></div>' +
+      '<div class="story-header"><p class="story-tag">'+(story.tag||'')+' &middot; '+(story.location||'')+'</p><h1>'+story.name+'</h1></div>' +
+      (story.text ? '<p class="story-text">'+story.text+'</p>' : '') +
+      galleryHtml;
+  } catch(e){
+    app.innerHTML = '<a href="/" class="back-link">&larr; GS Films</a><div class="not-found"><h1>Something went wrong</h1><a href="/">Back to GS Films</a></div>';
+  }
+}
+loadStory();
+</script>
+</body>
+</html>
