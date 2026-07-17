@@ -799,8 +799,9 @@ function renderStoriesOnSite(stories){
   if(!grid || !stories.length) return;
   grid.innerHTML = '';
   stories.forEach(s => {
+    const href = s.link ? s.link.replace(/^\/+|\/+$/g,'') : '#';
     grid.innerHTML += `
-      <a class="story-card" href="stories/story.html?id=${s.id}">
+      <a class="story-card" href="${href}">
         <img src="${s.cover}" alt="${s.name}"/>
         <div class="story-overlay">
           <p class="story-date">${s.tag} &nbsp;&middot;&nbsp; ${s.location}</p>
@@ -809,7 +810,7 @@ function renderStoriesOnSite(stories){
         </div>
       </a>`;
   });
-}
+      }
 
 function getYouTubeId(url){
   if(!url) return null;
