@@ -606,6 +606,7 @@ try{
   if(s){
     const parsed = JSON.parse(s);
     state = {...state, ...parsed};
+    if(!state.hero) state.hero = {image:null};
     if(!state.intro) state.intro = {left:null,right:null,mobile:null};
     if(!state.about) state.about = {left:null,right:null,mobile:null};
   }
