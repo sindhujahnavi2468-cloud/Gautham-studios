@@ -701,8 +701,57 @@ async function uploadToCloudinary(file, resourceType){
   return data.secure_url || null;
 }
 
-/* ─── FRAMES (14 slots, mirrors the site's magazine grid) ────── */
+/* ─── HERO IMAGE ─────────────────────────────────────────────── */
 
+function renderHeroImg(){
+  const slot = document.getElementById('heroImageSlot');
+  if(!slot) return;
+  const url = state.hero.image;
+  const fresh = slot.cloneNode(false);
+  fresh.className = 'section-img-slot ' + (url ? 'has-image' : 'empty');
+  fresh.style.aspectRatio = '16/9';
+  if(url){
+    fresh.innerHTML =
+      '<img src="'+url+'" alt="Hero"/>'
+      +'<span class="slot-num">HERO</span>'
+      +'<div class="slot-overlay"><span class="slot-icon">✎</span><span class="slot-txt">Change image</span></div>'
+      +'<button class="remove-img" title="Remove">✕</button>';
+    fresh.querySelector('.remove-img').addEventListener('click', e => {
+      e.stopPropagation();
+      state.hero.image = null;
+      renderHeroImg();
+      showToast('Hero image removed — remember to Save Changes');
+    });
+  } else {
+    fresh.innerHTML =
+      '<span class="slot-num">HERO</span>'
+      +'<div class="slot-overlay"><span class="slot-icon">+</span><span class="slot-txt">Upload image</span></div>';
+  }
+  fresh.addEventListener('click', uploadHeroImgClick);
+  slot.parentNode.replaceChild(fresh, slot);
+  fresh.id = 'heroImageSlot';
+}
+
+async function uploadHeroImgClick(){
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async e => {
+    const file = e.target.files[0]; if(!file) return;
+    if(file.size > 10*1024*1024){showToast('Image too large — max 10MB','error');return;}
+    showToast('Uploading...','');
+    const url = await uploadToCloudinary(file,'image');
+    if(url){
+      state.hero.image = url;
+      renderHeroImg();
+      showToast('Hero image uploaded — remember to Save Changes','success');
+    } else {
+      showToast('Upload failed — check Cloudinary preset','error');
+    }
+  };
+  inp.click();
+}
+
+/* ─── FRAMES (14 slots, mirrors the site's magazine grid) ────── */
 function renderFrames(){
   renderFrameRow('row1Grid',[0,1,2,3,4]);
   renderFrameRow2();
