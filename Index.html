@@ -812,6 +812,12 @@ function renderStoriesOnSite(stories){
   });
       }
 
+function renderHeroOnSite(hero){
+  if(!hero || !hero.image) return;
+  const el = document.getElementById('heroBg');
+  if(el) el.style.backgroundImage = `url('${hero.image}')`;
+}
+
 function getYouTubeId(url){
   if(!url) return null;
   const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
